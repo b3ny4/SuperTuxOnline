@@ -24,7 +24,10 @@ Player.prototype.horizontalCollision = function(item) {
             this.dead = true;
             this.collision = false;
         }else {
+            item.sprite.setNumTiles(1);
+            item.sprite.setRow(3);
             if (this.hSpeed > 0){
+                item.sprite.mirror(true)
                 item.hSpeed = 500;
             }
             if (this.hSpeed < 0){
@@ -35,13 +38,14 @@ Player.prototype.horizontalCollision = function(item) {
         item.collect();
     }
 }
+
 Player.prototype.verticalCollision = function(item) {
     if (item instanceof IceBlock) {
         item.stomp();
         this.vSpeed = -300;
     } else if (item instanceof Coin) {
         item.collect();
-    } 
+    }
 }
 
 Player.prototype.run = function() {

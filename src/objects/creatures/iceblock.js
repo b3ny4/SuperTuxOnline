@@ -1,4 +1,5 @@
 
+import { Coin } from '../world/coin.js';
 import { Creature } from './creature.js';
 
 export function IceBlock(game, x, y) {
@@ -15,4 +16,20 @@ IceBlock.prototype.stomp = function() {
     this.sprite.setNumTiles(1);
     this.sprite.setRow(1);
     this.hSpeed = 0;
+}
+
+IceBlock.prototype.horizontalCollision = function(item) {
+    if (!(item instanceof Coin)) {
+        this.hSpeed *= -1;
+        this.sprite.mirror(true)
+        this.run();
+    } 
+}
+
+IceBlock.prototype.run = function() {
+
+    this.fall();
+
+    this.walk(this.horizontalCollision);
+
 }
