@@ -1,5 +1,8 @@
 
+import { Keyboard } from './mechanics/keyboard.js';
+import { Debug } from './objects/debug.js';
 import { Player } from './objects/player.js';
+import { Background } from './objects/world/background.js';
 import { Block } from './objects/world/block.js';
 
 var game = {
@@ -9,7 +12,14 @@ var game = {
     timestamp: -1,
     deltaTime: 0,
 
+    height: 972,
+    width: 1580,
+
     items: new Array(),
+
+    debug: null,
+    keyboard: null,
+    background: null,
 
     attach: function(item) {
         this.items.push(item);
@@ -18,9 +28,14 @@ var game = {
     render: function() {
 
         game.ctx.clearRect(0,0,game.ctx.canvas.width, game.ctx.canvas.height);
+
+        this.background.render();
+
         for(let item of this.items) {
             item.render();
         }
+
+        this.debug.render();
     
     },
 
@@ -44,16 +59,17 @@ var game = {
     },
 
     fullscreen: function() {
-        this.ctx.canvas.width = window.innerWidth;
-        this.ctx.canvas.height = window.innerHeight;
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.ctx.canvas.width = this.width;
+        this.ctx.canvas.height = this.height;
         this.render();
     }
 }
 
-
 export function main() {
 
-    game.canvas = document.getElementById("game");
+    game.canvas = document.getElementById("canvas");
     game.ctx = game.canvas.getContext("2d");
 
     game.attach(new Player(game, 100, 100));
@@ -62,7 +78,15 @@ export function main() {
         game.attach(new Block(game, 32*i + 16, 500));
     }
 
-    game.fullscreen();
+    game.debug = new Debug(game);
 
+    game.keyboard = new Keyboard(game);
+
+    game.background = new Background(game, "data/images/backgrounds/nighthills.png");
+
+    window.addEventListener("resize", game.fullscreen.bind(game));
+    game.fullscreen();
     window.requestAnimationFrame(game.run.bind(game));
+
+
 }
