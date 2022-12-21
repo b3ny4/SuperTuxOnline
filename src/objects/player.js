@@ -1,5 +1,6 @@
 
-import { Item } from './item.js';
+import { IceBlock } from './creatures/iceblock.js';
+import { Creature } from './creatures/creature.js';
 
 /**
  * Represents a (controllable) player
@@ -8,12 +9,26 @@ import { Item } from './item.js';
  * @param {int} y y coord in the game
  */
 export function Player(game, x=0, y=0) {
-    Item.call(this, game, "data/images/tux.png", 8, x, y, 49, 48);
+    Creature.call(this, game, "data/images/tux.png", 8, x, y, 49, 48);
     this.vSpeed = -300;
     this.dead = false;
 }
-Player.prototype = Object.create(Item.prototype);
+Player.prototype = Object.create(Creature.prototype);
 Player.prototype.constructor = Player;
+
+Player.prototype.horizontalCollision = function(item) {
+    if (item instanceof IceBlock) {
+        this.vSpeed = - 1000;
+        this.dead = true;
+        this.collision = false;
+    }
+}
+Player.prototype.verticalCollision = function(item) {
+    if (item instanceof IceBlock) {
+        item.stomp();
+        this.vSpeed = -300;
+    }
+}
 
 Player.prototype.run = function() {
 
@@ -22,59 +37,44 @@ Player.prototype.run = function() {
     if (this.game.keyboard.keymap[32] && this.vSpeed === 0 && !this.dead) {
         this.vSpeed = - 500;
     }
-    // fall
-    this.vSpeed += 640*this.game.deltaTime;
-    
-    this.y+=this.vSpeed*this.game.deltaTime;
 
-    // vertical collision
-    for (let item of this.game.items) {
-        if (item === this) {
-            continue;
-        }
-        if (this.collidesWith(item)) {
-            let offset = item.height/2 + this.height/2
-            if (this.vSpeed > 0) {
-                this.y = item.y - offset;
-            } else {
-                this.y = item.y + offset;
-            }
-            this.vSpeed = 0;
-        }
-    }
+    this.fall(this.verticalCollision);
+
 
     // walk
-    let hSpeed = 0;
+    this.hSpeed = 0;
     if (this.game.keyboard.keymap[37] && !this.dead) {
-        hSpeed = - 300 * this.game.deltaTime;
+        this.hSpeed = - 300;
+        this.sprite.mirror(true);
     }
     if (this.game.keyboard.keymap[39] && !this.dead) {
-        hSpeed = 300 * this.game.deltaTime;
-    }
-    this.x += hSpeed;
-
-    // horizontal collision
-    for (let item of this.game.items) {
-        if (item === this) {
-            continue;
-        }
-        if (this.collidesWith(item)) {
-            let offset = item.width/2 + this.width/2
-            if (this.hSpeed > 0) {
-                this.x = item.x - offset;
-            } else {
-                this.x = item.x + offset;
-            }
-        }
+        this.hSpeed = 300;
+        this.sprite.mirror(false);
     }
 
+    this.walk(this.horizontalCollision);
 
-    // die under 800
-    if (this.y > this.game.height && ! this.dead) {
+    if (this.vSpeed != 0) {
+        this.sprite.setNumTiles(1);
+        this.sprite.setRow(2);
+    }
+    else if (this.hSpeed === 0) {
+        this.sprite.setNumTiles(1);
+        this.sprite.setRow(0);
+    }
+    else {
+        this.sprite.setNumTiles(8);
+        this.sprite.setRow(0);
+    }
+    if (this.dead) {
         this.sprite.setNumTiles(2);
         this.sprite.setRow(4);
         this.width = 57;
         this.sprite.setWidth(this.width);
+    }
+
+    // die under 800
+    if (this.y > this.game.height && ! this.dead) {
         this.vSpeed = - 1000;
         this.dead = true;
     }
@@ -83,4 +83,5 @@ Player.prototype.run = function() {
     this.game.debug.register("PlayerX", this.x);
     this.game.debug.register("PlayerY", this.y);
     this.game.debug.register("vSpeed", this.vSpeed);
+    this.game.debug.register("hSpeed", this.hSpeed);
 }

@@ -1,5 +1,6 @@
 
 import { Keyboard } from './mechanics/keyboard.js';
+import { IceBlock } from './objects/creatures/iceblock.js';
 import { Debug } from './objects/debug.js';
 import { Player } from './objects/player.js';
 import { Background } from './objects/world/background.js';
@@ -20,6 +21,7 @@ var game = {
     debug: null,
     keyboard: null,
     background: null,
+    player: null,
 
     attach: function(item) {
         this.items.push(item);
@@ -35,6 +37,8 @@ var game = {
             item.render();
         }
 
+        this.player.render();
+
         this.debug.render();
     
     },
@@ -48,10 +52,14 @@ var game = {
         this.timestamp = timestamp;
 
         this.tick = Math.round(timestamp/100);
+
+        this.debug.register("tick", this.tick);
         
         for(let item of this.items) {
             item.run();
         }
+
+        this.player.run();
 
         this.render();
 
@@ -72,11 +80,17 @@ export function main() {
     game.canvas = document.getElementById("canvas");
     game.ctx = game.canvas.getContext("2d");
 
-    game.attach(new Player(game, 100, 100));
+    game.player = new Player(game, 100, 100);
 
     for(let i = 0; i < 10; i++) {
         game.attach(new Block(game, 32*i + 16, 500));
     }
+    
+    for(let i = 0; i < 10; i++) {
+        game.attach(new Block(game, 32*i + 600, 450));
+    }
+
+    game.attach(new IceBlock(game, 1000, 400));
 
     game.debug = new Debug(game);
 
