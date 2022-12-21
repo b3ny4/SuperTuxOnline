@@ -21,7 +21,11 @@ IceBlock.prototype.stomp = function() {
 IceBlock.prototype.horizontalCollision = function(item) {
     if (!(item instanceof Coin)) {
         this.hSpeed *= -1;
+        if (this.hSpeed > 0){
         this.sprite.mirror(true)
+        }else{
+            this.sprite.mirror(false)
+        }
         this.run();
     } 
 }
