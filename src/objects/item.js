@@ -12,10 +12,11 @@ import { Element } from './element.js';
  * @param {int} width width of the item
  * @param {int} height height of the item
  */
-export function Item(game, src, numTiles, x=0, y=0, width = 32, height = 32) {
+export function Item(game, src, numTiles, x=0, y=0, width = 32, height = 32, collision= true) {
     Element.call(this, game, x, y);
     this.height = height;
     this.width = width;
+    this.collision = collision;
     this.sprite = new Sprite(game, src, width, height);
     this.sprite.setNumTiles(numTiles);
 }
@@ -26,7 +27,7 @@ Item.prototype.render = function() {
     this.sprite.render(this.x, this.y);
 }
 
-Item.prototype.collidesWith = function(item) {    
+Item.prototype.collidesWith = function(item) {
     let myLeft = this.x - this.width/2;
     let myRight = this.x + this.width/2;
     let myTop = this.y - this.height/2;

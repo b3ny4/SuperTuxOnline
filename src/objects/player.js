@@ -1,6 +1,7 @@
 
 import { IceBlock } from './creatures/iceblock.js';
 import { Creature } from './creatures/creature.js';
+import { Coin } from './world/coin.js';
 
 /**
  * Represents a (controllable) player
@@ -21,12 +22,16 @@ Player.prototype.horizontalCollision = function(item) {
         this.vSpeed = - 1000;
         this.dead = true;
         this.collision = false;
+    } else if (item instanceof Coin) {
+        item.collect();
     }
 }
 Player.prototype.verticalCollision = function(item) {
     if (item instanceof IceBlock) {
         item.stomp();
         this.vSpeed = -300;
+    } else if (item instanceof Coin) {
+        item.collect();
     }
 }
 
@@ -84,4 +89,5 @@ Player.prototype.run = function() {
     this.game.debug.register("PlayerY", this.y);
     this.game.debug.register("vSpeed", this.vSpeed);
     this.game.debug.register("hSpeed", this.hSpeed);
+    this.game.debug.register("coins", this.game.coins);
 }

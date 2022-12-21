@@ -5,6 +5,7 @@ import { Debug } from './objects/debug.js';
 import { Player } from './objects/player.js';
 import { Background } from './objects/world/background.js';
 import { Block } from './objects/world/block.js';
+import { Coin } from './objects/world/coin.js';
 
 var game = {
     canvas: null,
@@ -17,6 +18,7 @@ var game = {
     width: 1580,
 
     items: new Array(),
+    coins: 0,
 
     debug: null,
     keyboard: null,
@@ -88,6 +90,7 @@ export function main() {
     
     for(let i = 0; i < 10; i++) {
         game.attach(new Block(game, 32*i + 600, 450));
+        game.attach(new Coin(game, 32*i + 600, 400));
     }
 
     game.attach(new IceBlock(game, 1000, 400));
