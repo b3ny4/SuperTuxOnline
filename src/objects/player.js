@@ -19,13 +19,26 @@ Player.prototype.constructor = Player;
 
 Player.prototype.horizontalCollision = function(item) {
     if (item instanceof IceBlock) {
-        this.vSpeed = - 1000;
-        this.dead = true;
-        this.collision = false;
+        if (!item.stomped) {
+            this.vSpeed = - 1000;
+            this.dead = true;
+            this.collision = false;
+        }else {
+            item.sprite.setNumTiles(1);
+            item.sprite.setRow(3);
+            if (this.hSpeed > 0){
+                item.sprite.mirror(true)
+                item.hSpeed = 500;
+            }
+            if (this.hSpeed < 0){
+                item.hSpeed = -500;
+            }
+        }
     } else if (item instanceof Coin) {
         item.collect();
     }
 }
+
 Player.prototype.verticalCollision = function(item) {
     if (item instanceof IceBlock) {
         item.stomp();

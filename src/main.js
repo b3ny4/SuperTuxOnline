@@ -88,12 +88,16 @@ export function main() {
         game.attach(new Block(game, 32*i + 16, 500));
     }
     
-    for(let i = 0; i < 10; i++) {
+    for(let i = 0; i < 12; i++) {
+
         game.attach(new Block(game, 32*i + 600, 450));
         game.attach(new Coin(game, 32*i + 600, 400));
     }
 
-    game.attach(new IceBlock(game, 1000, 400));
+    game.attach(new Block(game,600,418));
+    game.attach(new Block(game, 32*11 + 600,418));
+
+    game.attach(new IceBlock(game, 1000, 300));
 
     game.debug = new Debug(game);
 
